@@ -32,13 +32,13 @@ def main():
     chat.add_assistant_message("```json")
 
     answer = chat.send_message(
-        user_input="Continue the previous answer.",
+        user_input="",
         system=[{"type": "text", "text": "You are a helpful assistant."}],
         max_tokens=200,
         stream=True,
-        stop_sequences=["```"]  # Stop when reaching the end of the code block
-
     )
+    
+
 
 if __name__ == "__main__":
     main()
