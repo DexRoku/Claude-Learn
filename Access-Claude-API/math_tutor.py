@@ -1,4 +1,6 @@
 # math_tutor.py
+import sys
+sys.path.append('..') 
 from chat_client import AnthropicChat
 
 def main():
