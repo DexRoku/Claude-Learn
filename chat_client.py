@@ -18,9 +18,9 @@ class AnthropicChat:
     def _check_api_key(self):
         """Check if API key is loaded properly."""
         if self.api_key:
-            print("API key loaded ✅")
+            print("API key loaded")
         else:
-            print("API key not found ❌")
+            print("API key not found")
             raise ValueError("ANTHROPIC_API_KEY not found in environment variables")
     
     def add_user_message(self, text: str):
@@ -34,7 +34,7 @@ class AnthropicChat:
 
     def send_message(self, user_input=None, system=None, max_tokens=100, stream=False, stop_sequences=[]):
         """Send a message and get response."""
-        if user_input is not None:  # Fixed: was checking if None
+        if user_input is not None:
             self.add_user_message(str(user_input))
 
         if stream: 
@@ -50,7 +50,7 @@ class AnthropicChat:
             ) as stream:
                 for text_chunk in stream.text_stream:
                     print(text_chunk, end="", flush=True)
-                    full_answer += text_chunk  # ✅ FIX: Added this line
+                    full_answer += text_chunk 
 
             print()  # New line after streaming
             self.add_assistant_message(full_answer)
@@ -66,7 +66,7 @@ class AnthropicChat:
                 max_tokens=max_tokens,
                 messages=self.messages,
                 system=system, # type: ignore
-                stop_sequences=stop_sequences  # Added stop_sequences support for non-streaming
+                stop_sequences=stop_sequences 
             )
             
             answer = response.content[0].text # type: ignore
