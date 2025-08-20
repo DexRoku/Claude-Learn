@@ -11,7 +11,8 @@ class AnthropicChat:
         self._check_api_key()
         
         self.client = Anthropic()
-        self.model = "claude-sonnet-4-0"
+        self.model = "claude-3-haiku-20240307"
+
         self.messages = []
     
     def _check_api_key(self):
