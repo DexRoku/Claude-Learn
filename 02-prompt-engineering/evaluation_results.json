@@ -1,0 +1,67 @@
+[
+  {
+    "output": {
+      "answer": "Here's a Python function that extracts the bucket name from an AWS S3 bucket ARN:\n\n```python\ndef extract_bucket_name_from_arn(s3_arn):\n    \"\"\"\n    Extract the bucket name from an AWS S3 bucket ARN.\n    \n    Args:\n        s3_arn (str): The S3 bucket ARN (e.g., 'arn:aws:s3:::my-example-bucket')\n    \n    Returns:\n        str: The bucket name extracted from the ARN\n    \n    Raises:\n        ValueError: If the ARN format is invalid\n    \"\"\"\n    if not isinstance(s3_arn, str):\n        raise ValueError(\"ARN must be a string\")\n    \n    # Split the ARN by colons\n    arn_parts = s3_arn.split(':')",
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "score": 3,
+    "test_case": {
+      "task": "Write a Python function that takes an AWS S3 bucket ARN and extracts just the bucket name from it. For example, given 'arn:aws:s3:::my-example-bucket', it should return 'my-example-bucket'."
+    },
+    "reasoning": "While the solution starts with good practices including proper documentation, type checking, and the right parsing approach, it's fundamentally incomplete. The code cuts off after splitting the ARN and doesn't implement the core logic to extract and return the bucket name (which should be `arn_parts[5]` after validation). A complete solution would need to validate the ARN has 6 parts, verify it's a proper S3 ARN format, and return the final component.",
+    "strengths": [
+      "Good function signature with descriptive name and clear docstring including args, returns, and raises sections",
+      "Proper input validation checking for string type",
+      "Correct approach using split(':') to parse ARN components"
+    ],
+    "weaknesses": [
+      "Code is incomplete - cuts off mid-implementation without completing the bucket name extraction logic",
+      "Missing validation for proper S3 ARN format (should verify 6 parts, 'arn' prefix, 'aws' service, 's3' resource type)",
+      "No error handling for edge cases like empty strings, malformed ARNs, or ARNs with insufficient parts"
+    ]
+  },
+  {
+    "output": {
+      "answer": "Here's a JSON object that defines an AWS IAM policy allowing read-only access to the S3 bucket named 'company-logs':\n\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"AllowListBucket\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"s3:ListBucket\",\n      \"Resource\": \"arn:aws:s3:::company-logs\"\n    },\n    {\n      \"Sid\": \"AllowGetObject\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"s3:GetObject\",\n      \"Resource\": \"arn:aws:s3:::company-logs/*\"\n    }\n  ]\n}\n```\n\nThis IAM policy includes:\n\n- **Version**: Uses the current policy language version (2012-10-",
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "score": 7,
+    "test_case": {
+      "task": "Create a JSON object that defines an AWS IAM policy allowing read-only access to a specific S3 bucket named 'company-logs'. The policy should allow ListBucket and GetObject actions."
+    },
+    "reasoning": "The core IAM policy structure is technically correct and follows AWS best practices. The policy properly separates bucket-level and object-level permissions with appropriate resource ARNs. However, the response is incomplete due to truncation, and while the basic requirements are met, it could benefit from mentioning additional security considerations for a comprehensive solution.",
+    "strengths": [
+      "Correctly implements the principle of least privilege by granting only the specific permissions requested (ListBucket and GetObject)",
+      "Proper resource ARN formatting with correct distinction between bucket-level (s3:ListBucket) and object-level (s3:GetObject) permissions",
+      "Uses current IAM policy language version (2012-10-17) and includes descriptive Sid values for better policy management"
+    ],
+    "weaknesses": [
+      "The response appears to be truncated mid-sentence in the explanation section, leaving the description incomplete",
+      "Missing additional security considerations such as potential IP restrictions, MFA requirements, or time-based access controls that might be relevant for production environments"
+    ]
+  },
+  {
+    "output": {
+      "answer": "Here's a regular expression that validates AWS EC2 instance IDs:\n\n```regex\n^i-[0-9a-f]{8}([0-9a-f]{9})?$\n```\n\n## Explanation:\n\n- `^` - Start of string anchor\n- `i-` - Literal characters \"i-\"\n- `[0-9a-f]{8}` - Exactly 8 hexadecimal characters (0-9 and a-f)\n- `([0-9a-f]{9})?` - Optional group of exactly 9 more hexadecimal characters\n- `$` - End of string anchor\n\n## Alternative (more explicit) version:\n\n```regex\n^i-([0-9a-f]{8}|[0-9a-f]{17})$\n```\n\nThis version uses alternation to explicitly match either:",
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "score": 6,
+    "test_case": {
+      "task": "Write a regular expression that validates AWS EC2 instance IDs. Instance IDs start with 'i-' followed by either 8 or 17 hexadecimal characters (e.g., 'i-1234abcd' or 'i-0123456789abcdef0')."
+    },
+    "reasoning": "The solution demonstrates solid understanding of regex construction and AWS EC2 instance ID format. The core logic is correct with proper anchoring and quantifiers. However, the critical flaw is excluding uppercase hexadecimal characters, which are valid in AWS instance IDs. Real AWS instance IDs can contain both uppercase and lowercase hex characters (e.g., 'i-1234ABCD'). The incomplete explanation and lack of test cases are minor issues compared to this functional limitation.",
+    "strengths": [
+      "Correct logic and structure - both regex patterns accurately match the AWS EC2 instance ID format requirements",
+      "Provides two valid approaches with clear explanation of each component using proper regex anchors and character classes",
+      "Good documentation with step-by-step breakdown of regex components and practical examples"
+    ],
+    "weaknesses": [
+      "Missing uppercase hexadecimal characters (A-F) - only includes lowercase [0-9a-f] instead of case-insensitive [0-9a-fA-F]",
+      "Incomplete explanation in the alternative version section - cuts off mid-sentence without finishing the comparison",
+      "No test cases or validation examples provided to demonstrate the regex working with actual instance IDs"
+    ]
+  }
+]

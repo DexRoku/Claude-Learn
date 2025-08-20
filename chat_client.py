@@ -33,7 +33,7 @@ class AnthropicChat:
 
     def send_message(self, user_input=None, system=None, max_tokens=100, stream=False, stop_sequences=[]):
         """Send a message and get response."""
-        if user_input is None:
+        if user_input is not None:  # Fixed: was checking if None
             self.add_user_message(str(user_input))
 
         if stream: 
@@ -49,6 +49,7 @@ class AnthropicChat:
             ) as stream:
                 for text_chunk in stream.text_stream:
                     print(text_chunk, end="", flush=True)
+                    full_answer += text_chunk  # ✅ FIX: Added this line
 
             print()  # New line after streaming
             self.add_assistant_message(full_answer)
@@ -59,12 +60,12 @@ class AnthropicChat:
             }
 
         else:
-
             response = self.client.messages.create(
                 model=self.model,
                 max_tokens=max_tokens,
                 messages=self.messages,
-                system=system # type: ignore
+                system=system, # type: ignore
+                stop_sequences=stop_sequences  # Added stop_sequences support for non-streaming
             )
             
             answer = response.content[0].text # type: ignore

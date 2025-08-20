@@ -32,7 +32,7 @@ def main():
     chat.add_assistant_message("```json")
 
     answer = chat.send_message(
-        user_input="",
+        user_input=None,
         system=[{"type": "text", "text": "You are a helpful assistant."}],
         max_tokens=200,
         stream=True,

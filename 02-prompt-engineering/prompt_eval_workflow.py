@@ -22,7 +22,7 @@ def run_prompt(test_case):
 
 def run_test_case(test_case):
     output = run_prompt(test_case)
-
+    
     score = 10
     return {"output": output, "score": score, "test_case": test_case}
 
@@ -33,10 +33,10 @@ def run_eval(test_case):
         result = run_test_case(test_case)
         results.append(result)
     return results
-
+   
 
 if __name__ == "__main__":
     with open("dataset.json", "r") as f:
         dataset = json.load(f)
     results = run_eval(dataset)
-    print(json.dumps(results, indent=2))  
+    print(json.dumps(results, indent=2))
