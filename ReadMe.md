@@ -33,50 +33,8 @@ The course is structured into several key modules covering:
 ## 📁 Repository Structure
 
 ```
-├── 01-api-basics/              # API access and basic requests
-│   ├── getting-started/        # First API calls
-│   ├── multi-turn-chat/        # Conversation handling
-│   └── system-prompts/         # System prompt exercises
-├── 02-prompt-engineering/      # Prompt engineering techniques
-│   ├── clear-direct/           # Being clear and direct
-│   ├── xml-structure/          # Using XML tags
-│   └── examples/               # Providing examples
-├── 03-prompt-evaluation/       # Evaluation and testing
-│   ├── test-datasets/          # Generating test data
-│   ├── model-grading/          # Model-based evaluation
-│   └── code-grading/           # Code-based evaluation
-├── 04-tool-use/               # Tool integration
-│   ├── basic-tools/            # Simple tool functions
-│   ├── multi-turn-tools/       # Complex tool workflows
-│   ├── batch-processing/       # Batch tool operations
-│   └── web-search-tools/       # Web search integration
-├── 05-rag/                    # Retrieval Augmented Generation
-│   ├── text-chunking/          # Chunking strategies
-│   ├── embeddings/             # Text embeddings
-│   ├── full-rag-flow/          # Complete RAG pipeline
-│   ├── bm25-search/            # Lexical search
-│   └── contextual-retrieval/   # Advanced retrieval
-├── 06-advanced-features/      # Claude's advanced capabilities
-│   ├── extended-thinking/      # Extended reasoning
-│   ├── multimodal/            # Image and PDF support
-│   ├── citations/             # Source attribution
-│   └── prompt-caching/        # Caching optimizations
-├── 07-mcp/                   # Model Context Protocol
-│   ├── mcp-setup/             # Project setup
-│   ├── tools-definition/      # Defining tools
-│   ├── resources/             # Resource management
-│   └── prompts/               # Prompt definitions
-├── 08-anthropic-apps/        # Claude Code and Computer Use
-│   ├── claude-code/           # Code generation
-│   ├── computer-use/          # GUI automation
-│   └── debugging/             # Automated debugging
-├── 09-agents-workflows/      # Building AI agents
-│   ├── parallelization/       # Parallel workflows
-│   ├── chaining/              # Sequential workflows
-│   ├── routing/               # Decision-based routing
-│   └── environment/           # Environment inspection
-├── final-project/            # Capstone project
-└── docs/                     # Documentation and notes
+
+
 ```
 
 ## 🚀 Getting Started
