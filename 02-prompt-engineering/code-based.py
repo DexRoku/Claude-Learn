@@ -262,28 +262,387 @@ def run_eval(dataset):
     return results
 
 
+def generate_html_report(results):
+    """Generate an HTML report from evaluation results"""
+    
+    # Calculate summary statistics
+    total_tests = len(results)
+    avg_final_score = sum(r["final_score"] for r in results) / total_tests if total_tests > 0 else 0
+    avg_model_score = sum(r["model_evaluation"]["score"] for r in results) / total_tests if total_tests > 0 else 0
+    avg_code_score = sum(r["code_evaluation"]["score"] for r in results) / total_tests if total_tests > 0 else 0
+    
+    # Count by type
+    type_counts = {}
+    for result in results:
+        content_type = result['test_case'].get('type', 'unknown')
+        type_counts[content_type] = type_counts.get(content_type, 0) + 1
+    
+    html_content = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation Report</title>
+    <style>
+        body {{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }}
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }}
+        .header {{
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }}
+        .header h1 {{
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }}
+        .header p {{
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }}
+        .summary {{
+            padding: 30px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }}
+        .summary-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }}
+        .summary-card {{
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }}
+        .summary-card h3 {{
+            margin: 0 0 10px 0;
+            color: #4a5568;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }}
+        .summary-card .value {{
+            font-size: 2em;
+            font-weight: bold;
+            color: #2d3748;
+        }}
+        .type-breakdown {{
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }}
+        .type-badge {{
+            background: #4299e1;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }}
+        .results {{
+            padding: 0;
+        }}
+        .test-case {{
+            border-bottom: 1px solid #e2e8f0;
+            padding: 25px;
+            transition: background-color 0.3s;
+        }}
+        .test-case:hover {{
+            background: #f7fafc;
+        }}
+        .test-case:last-child {{
+            border-bottom: none;
+        }}
+        .test-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }}
+        .test-number {{
+            background: #4a5568;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }}
+        .test-type {{
+            background: #38b2ac;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }}
+        .task-description {{
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #4a5568;
+        }}
+        .scores {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }}
+        .score-item {{
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+        }}
+        .score-item.final {{
+            border-color: #38b2ac;
+            background: #e6fffa;
+        }}
+        .score-value {{
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2d3748;
+        }}
+        .score-label {{
+            font-size: 0.8em;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }}
+        .details {{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }}
+        .detail-section {{
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 6px;
+        }}
+        .detail-section h4 {{
+            margin: 0 0 10px 0;
+            color: #4a5568;
+            font-size: 1em;
+        }}
+        .detail-section p {{
+            margin: 5px 0;
+            color: #718096;
+            line-height: 1.4;
+        }}
+        .strengths, .weaknesses {{
+            list-style: none;
+            padding: 0;
+        }}
+        .strengths li {{
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border-left: 4px solid #38a169;
+        }}
+        .weaknesses li {{
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border-left: 4px solid #e53e3e;
+        }}
+        .output-section {{
+            grid-column: 1 / -1;
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }}
+        .toggle-output {{
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }}
+        .toggle-output:hover {{
+            background: #3182ce;
+        }}
+        .output-content {{
+            display: none;
+        }}
+        @media (max-width: 768px) {{
+            .details {{
+                grid-template-columns: 1fr;
+            }}
+            .scores {{
+                grid-template-columns: 1fr;
+            }}
+            .summary-grid {{
+                grid-template-columns: 1fr;
+            }}
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AI Evaluation Report</h1>
+            <p>Comprehensive analysis of {total_tests} test cases</p>
+        </div>
+        
+        <div class="summary">
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3>Final Average Score</h3>
+                    <div class="value">{avg_final_score:.1f}/10</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Model Score</h3>
+                    <div class="value">{avg_model_score:.1f}/10</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Code Score</h3>
+                    <div class="value">{avg_code_score:.1f}/10</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Tests</h3>
+                    <div class="value">{total_tests}</div>
+                </div>
+            </div>
+            <div class="type-breakdown">
+                {"".join([f'<span class="type-badge">{type_name}: {count}</span>' for type_name, count in type_counts.items()])}
+            </div>
+        </div>
+        
+        <div class="results">
+"""
+
+    for i, result in enumerate(results, 1):
+        test_case = result['test_case']
+        model_eval = result['model_evaluation']
+        code_eval = result['code_evaluation']
+        
+        strengths_html = "".join([f"<li>{strength}</li>" for strength in model_eval['strengths']])
+        weaknesses_html = "".join([f"<li>{weakness}</li>" for weakness in model_eval['weaknesses']])
+        
+        html_content += f"""
+            <div class="test-case">
+                <div class="test-header">
+                    <span class="test-number">Test {i}</span>
+                    <span class="test-type">{test_case.get('type', 'unknown')}</span>
+                </div>
+                
+                <div class="task-description">
+                    <strong>Task:</strong> {test_case['task']}
+                </div>
+                
+                <div class="scores">
+                    <div class="score-item final">
+                        <div class="score-value">{result['final_score']}</div>
+                        <div class="score-label">Final Score</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-value">{model_eval['score']}</div>
+                        <div class="score-label">Model Score</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-value">{code_eval['score']}</div>
+                        <div class="score-label">Code Score</div>
+                    </div>
+                </div>
+                
+                <div class="details">
+                    <div class="detail-section">
+                        <h4>Model Reasoning</h4>
+                        <p>{model_eval['reasoning']}</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>Code Validation</h4>
+                        <p>{code_eval['feedback']}</p>
+                    </div>
+                    
+                    {"<div class='detail-section'><h4>Strengths</h4><ul class='strengths'>" + strengths_html + "</ul></div>" if model_eval['strengths'] else ""}
+                    
+                    {"<div class='detail-section'><h4>Weaknesses</h4><ul class='weaknesses'>" + weaknesses_html + "</ul></div>" if model_eval['weaknesses'] else ""}
+                    
+                    <div class="output-section">
+                        <button class="toggle-output" onclick="toggleOutput({i})">Toggle Output</button>
+                        <div class="output-content" id="output-{i}">AI Output:
+{result['output']}</div>
+                    </div>
+                </div>
+            </div>
+"""
+
+    html_content += """
+        </div>
+    </div>
+    
+    <script>
+        function toggleOutput(testId) {
+            const output = document.getElementById('output-' + testId);
+            if (output.style.display === 'none' || output.style.display === '') {
+                output.style.display = 'block';
+            } else {
+                output.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
+"""
+    
+    return html_content
+
+
 if __name__ == "__main__":
     with open("dataset.json", "r") as f:
         dataset = json.load(f)
     
     results = run_eval(dataset)
     
-    # Save results
+    # Save JSON results
     with open("evaluation_results.json", "w") as f:
         json.dump(results, f, indent=2)
     
-    # Print detailed summary
-    print("\n=== DETAILED EVALUATION SUMMARY ===")
-    for i, result in enumerate(results):
-        print(f"\nTest {i+1}:")
-        print(f"  Task: {result['test_case']['task'][:60]}...")
-        print(f"  Type: {result['test_case'].get('type', 'unknown')}")
-        print(f"  Final Score: {result['final_score']}/10")
-        print(f"  Model Score: {result['model_evaluation']['score']}/10")
-        print(f"  Code Score: {result['code_evaluation']['score']}/10")
-        print(f"  Code Feedback: {result['code_evaluation']['feedback']}")
-        print(f"  Model Reasoning: {result['model_evaluation']['reasoning']}")
-        if result['model_evaluation']['strengths']:
-            print(f"  Strengths: {', '.join(result['model_evaluation']['strengths'])}")
-        if result['model_evaluation']['weaknesses']:
-            print(f"  Weaknesses: {', '.join(result['model_evaluation']['weaknesses'])}")
+    # Generate and save HTML report
+    html_report = generate_html_report(results)
+    with open("evaluation_report.html", "w", encoding='utf-8') as f:
+        f.write(html_report)
+    
+    print(f"\n✅ Evaluation complete!")
+    print(f"📊 JSON results saved to: evaluation_results.json")
+    print(f"📄 HTML report saved to: evaluation_report.html")
+    
+    # Print console summary
+    total_tests = len(results)
+    avg_final_score = sum(r["final_score"] for r in results) / total_tests if total_tests > 0 else 0
+    print(f"🎯 Average Final Score: {avg_final_score:.2f}/10 ({total_tests} tests)")
+    print("\nOpen evaluation_report.html in your browser to view the detailed report!")
