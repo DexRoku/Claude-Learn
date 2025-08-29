@@ -33,7 +33,16 @@ The course is structured into several key modules covering:
 ## 📁 Repository Structure
 
 ```
-
+drwxr-xr-x@ 10 dexter  staff   320 Aug 29 14:55 .
+drwxr-xr-x@  4 dexter  staff   128 Aug 20 16:06 ..
+drwxr-xr-x@ 13 dexter  staff   416 Aug 29 15:13 .git
+-rw-r--r--@  1 dexter  staff   402 Aug 20 16:06 .gitignore
+drwxr-xr-x@  7 dexter  staff   224 Aug 29 14:55 01-api-basics
+drwxr-xr-x@ 12 dexter  staff   384 Aug 24 15:55 02-prompt-engineering
+drwxr-xr-x   3 dexter  staff    96 Aug 29 14:56 03-tool-use-claude
+-rw-r--r--@  1 dexter  staff  5658 Aug 20 16:09 ReadMe.md
+drwxr-xr-x   3 dexter  staff    96 Aug 23 21:59 __pycache__
+-rw-r--r--@  1 dexter  staff  2034 Aug 20 16:06 interactive_chat.py
 
 ```
 
